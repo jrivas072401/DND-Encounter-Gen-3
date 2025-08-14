@@ -10,6 +10,7 @@ import ttrpg.encounterGen.domain.RewardService;
 import ttrpg.encounterGen.util.AliasMethod;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -34,8 +35,9 @@ public class Controller {
             switch (choice) {
                 case 1 -> generateEncounter();
                 case 2 -> view.displayMonsters(monsterService.findAll());
-                case 3 -> view.displayRewards(rewardService.findAll());
-                case 4 -> running = false;
+                case 3 -> manageMonsters();
+                case 4 -> view.displayRewards(rewardService.findAll());
+                case 5 -> running = false;
                 default -> view.showMessage("Invalid option, try again.");
             }
         }
@@ -88,6 +90,70 @@ public class Controller {
             Reward selected = rewards.get(choice);
             encounter.addReward(selected);
             view.displaySelectedReward(selected);
+        }
+    }
+
+    // monster management
+
+    private void manageMonsters() {
+        boolean managing = true;
+        while (managing) {
+            int choice = view.monsterMenu();
+            switch (choice) {
+                case 1 -> addMonster();
+                case 2 -> updateMonster();
+                case 3 -> deleteMonster();
+                case 4 -> view.displayMonsters(monsterService.findAll());
+                case 5 -> managing = false;
+                default -> view.showMessage("Invalid option.");
+            }
+        }
+    }
+
+    private void addMonster() {
+        try {
+            Monster monster = view.promptMonsterDetails();
+            Monster saved = monsterService.save(monster);
+            view.showMessage("Monster added with ID: " + saved.getId());
+        } catch (Exception e) {
+            view.showMessage("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateMonster() {
+        try {
+            Long id = view.promptMonsterId();
+            Optional<Monster> existingOpt = monsterService.findById(id);
+
+            if (existingOpt.isEmpty()) {
+                view.showMessage("Monster not found.");
+                return;
+            }
+
+            Monster existing = existingOpt.get(); // unwrap safely
+            Monster updated = view.promptMonsterDetails();
+            updated.setId(existing.getId());  // preserve ID
+            monsterService.save(updated);
+            view.showMessage("Monster updated successfully.");
+        } catch (Exception e) {
+            view.showMessage("Error: " + e.getMessage());
+        }
+    }
+
+    private void deleteMonster() {
+        try {
+            Long id = view.promptMonsterId();
+            Optional<Monster> existingOpt = monsterService.findById(id);
+
+            if (existingOpt.isEmpty()) {
+                view.showMessage("Monster not found.");
+                return;
+            }
+
+            monsterService.delete(id);
+            view.showMessage("Monster deleted successfully.");
+        } catch (Exception e) {
+            view.showMessage("Error: " + e.getMessage());
         }
     }
 }

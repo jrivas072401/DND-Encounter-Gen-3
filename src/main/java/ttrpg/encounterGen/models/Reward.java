@@ -22,7 +22,7 @@ public class Reward {
         this.rarity = rarity;
     }
 
-    // Convenience constructor to parse CSV-like input
+    // constructor to parse CSV-like input
     public Reward(String csvData) {
         String[] parts = csvData.split(",");
         this.name = parts[0];

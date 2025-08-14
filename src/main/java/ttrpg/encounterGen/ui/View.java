@@ -4,6 +4,7 @@ import ttrpg.encounterGen.models.Monster;
 import ttrpg.encounterGen.models.Reward;
 import ttrpg.encounterGen.models.Encounter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,8 +16,9 @@ public class View {
         System.out.println("\nSelect an option:");
         System.out.println("1. Generate Encounter");
         System.out.println("2. List Monsters");
-        System.out.println("3. List Rewards");
-        System.out.println("4. Exit");
+        System.out.println("3. Manage Monsters");  // NEW
+        System.out.println("4. List Rewards");
+        System.out.println("5. Exit");              // shifted for new option
         return Integer.parseInt(scanner.nextLine());
     }
 
@@ -80,5 +82,44 @@ public class View {
 
     public void showMessage(String message) {
         System.out.println(message);
+    }
+
+    public int monsterMenu() {
+        System.out.println("\nMonster Management:");
+        System.out.println("1. Add Monster");
+        System.out.println("2. Update Monster");
+        System.out.println("3. Delete Monster");
+        System.out.println("4. List Monsters");
+        System.out.println("5. Back to Main Menu");
+        return Integer.parseInt(scanner.nextLine());
+    }
+
+    public Monster promptMonsterDetails() {
+        System.out.println("Enter monster name:");
+        String name = scanner.nextLine();
+
+        System.out.println("Enter CR (>=0):");
+        double cr = Double.parseDouble(scanner.nextLine());
+
+        System.out.println("Enter EXP (>=0):");
+        int exp = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("Enter number of biomes (1-3):");
+        int count = Integer.parseInt(scanner.nextLine());
+        List<String> biomes = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            System.out.printf("Biome %d: ", i+1);
+            biomes.add(scanner.nextLine());
+        }
+
+        System.out.println("Enter link:");
+        String link = scanner.nextLine();
+
+        return new Monster(name, cr, exp, biomes, link);
+    }
+
+    public Long promptMonsterId() {
+        System.out.println("Enter monster ID:");
+        return Long.parseLong(scanner.nextLine());
     }
 }
